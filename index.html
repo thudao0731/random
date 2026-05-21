@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chọn Câu Ngẫu Nhiên</title>
+    <style>
+      /* Reset CSS cơ bản */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #e0eafc, #cfdef3);
+        padding: 20px;
+      }
+
+      /* Container tự co giãn thông minh theo màn hình */
+      .container {
+        text-align: center;
+        background: #ffffff;
+        padding: 40px 30px;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 550px; /* Giới hạn độ rộng tối đa trên máy tính */
+        transition: all 0.3s ease;
+      }
+
+      /* Ô hiển thị chữ */
+      .text-box {
+        min-height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #41719c;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 30px;
+        font-size: 1.25rem;
+        color: #2c3e50;
+        font-weight: 500;
+        line-height: 1.5;
+        background-color: #f8fbc2; /* Màu nền nhẹ giúp làm nổi bật chữ */
+        word-break: break-word; /* Tránh tràn chữ trên điện thoại màn hình nhỏ */
+      }
+
+      /* Nút bấm mặc định */
+      .btn {
+        background-color: #41719c;
+        color: #ffffff;
+        border: none;
+        padding: 14px 35px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 10px;
+        cursor: pointer;
+        width: 100%; /* Chuyển thành nút dài toàn màn hình trên điện thoại */
+        max-width: 280px; /* Giới hạn độ rộng nút trên máy tính */
+        box-shadow: 0 4px 12px rgba(65, 113, 156, 0.3);
+        transition:
+          background-color 0.1s ease,
+          transform 0.1s ease;
+        -webkit-tap-highlight-color: transparent; /* Xóa viền đen xấu xí khi bấm trên điện thoại */
+      }
+
+      /* Hiệu ứng đổi màu đỏ tức thì khi click chuột hoặc chạm tay */
+      .btn.clicked {
+        background-color: #58d554 !important;
+        box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4);
+        transform: scale(0.98); /* Hiệu ứng lún nút nhẹ khi bấm */
+      }
+
+      /* ==========================================================================
+           RESPONSIVE DESIGN (Tối ưu hóa hiển thị cho mọi thiết bị)
+           ========================================================================== */
+
+      /* 1. Dành cho máy tính bảng và màn hình nhỏ hơn (Dưới 768px) */
+      @media (max-width: 768px) {
+        .container {
+          padding: 30px 20px;
+        }
+        .text-box {
+          font-size: 1.15rem;
+          min-height: 90px;
+        }
+      }
+
+      /* 2. Dành cho điện thoại di động (Dưới 480px) */
+      @media (max-width: 480px) {
+        body {
+          padding: 15px; /* Giảm khoảng cách rìa ngoài màn hình */
+        }
+        .container {
+          padding: 25px 15px;
+          border-radius: 15px;
+        }
+        .text-box {
+          font-size: 1.1rem;
+          padding: 15px;
+          margin-bottom: 20px;
+          min-height: 80px;
+        }
+        .btn {
+          font-size: 1rem;
+          padding: 12px 20px;
+          max-width: 100%; /* Nút bấm chiếm trọn chiều rộng để dễ chạm ngón tay */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="text-box" id="resultBox">
+        Nhấn nút bên dưới để chọn câu ngẫu nhiên
+      </div>
+      <button class="btn" id="randomBtn" onclick="layCauNgauNhien()">
+        Đổi Câu Ngẫu Nhiên
+      </button>
+    </div>
+
+    <script>
+      // Danh sách 20 câu tiếng Việt của bạn
+      const danhSachCau = [
+        "Tôi chơi bóng đá vào cuối tuần.",
+        "Tôi đi học mỗi ngày.",
+        "Tôi có một con chó.",
+        "Bố mẹ tôi làm việc ở Hà Nội.",
+        "Anh ấy có một người chị/em gái.",
+        "Bố tôi uống cà phê.",
+        "Cô ấy ăn một chiếc pizza.",
+        "Hôm nay tôi ngủ đến 9 giờ.",
+        "Ông tôi 90 tuổi.",
+        "Tôi tặng cô ấy một món quà.",
+        "Tôi bắt xe buýt đi làm.",
+        "Mẹ tôi đi siêu thị vào thứ Bảy.",
+        "Cô ấy thích chơi đàn piano vào buổi tối.",
+        "Chúng tôi đang tìm một căn hộ.",
+        "Ngài/Bạn có thích đi du lịch nước ngoài không?",
+        "Tôi luôn đón sinh nhật bên cạnh bố mẹ tôi.",
+        "Tôi có rất nhiều sở thích khác nhau.",
+        "Ngôi nhà của tôi không lớn lắm nhưng ấm cúng.",
+        "Thói quen buổi sáng của tôi bắt đầu lúc 6:30.",
+        "Họ thường ăn sáng ở nhà.",
+      ];
+
+      function layCauNgauNhien() {
+        const btn = document.getElementById("randomBtn");
+        const resultBox = document.getElementById("resultBox");
+
+        // 1. Kích hoạt hiệu ứng đổi sang màu đỏ lập tức
+        btn.classList.add("clicked");
+
+        // 2. Chọn câu ngẫu nhiên và hiển thị
+        const indexNgauNhien = Math.floor(Math.random() * danhSachCau.length);
+        resultBox.innerText = danhSachCau[indexNgauNhien];
+
+        // 3. Trả lại màu xanh mặc định sau 0.2 giây (200ms)
+        setTimeout(() => {
+          btn.classList.remove("clicked");
+        }, 200);
+      }
+    </script>
+  </body>
+</html>
