@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chọn Câu Ngẫu Nhiên</title>
+    <title>Học Tiếng Đức Ngẫu Nhiên</title>
+
     <style>
-      /* Reset CSS cơ bản */
       * {
         box-sizing: border-box;
         margin: 0;
@@ -17,14 +17,121 @@
           -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
           Arial, sans-serif;
         display: flex;
-        justify-content: center;
+        flex-direction: column; /* 1. Đổi sang hướng dọc để không bị ép vào giữa */
         align-items: center;
+        justify-content: center; /* Đảm bảo khối container nội dung vẫn ở giữa */
         min-height: 100vh;
         background: linear-gradient(135deg, #e0eafc, #cfdef3);
-        padding: 20px;
+        padding: 80px 20px 20px 20px; /* 2. Tăng padding-top lên 80px để nội dung không bị header che khuất */
       }
 
-      /* Container tự co giãn thông minh theo màn hình */
+      .header {
+        position: fixed;
+        top: 0; /* 3. Bắt buộc có: Cố định sát mép trên màn hình */
+        left: 0; /* 4. Bắt buộc có: Cố định sát mép trái màn hình */
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px; /* Tăng nhẹ padding cho cân đối */
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(
+          10px
+        ); /* Hỗ trợ trình duyệt Safari mượt hơn */
+        z-index: 999; /* Tăng z-index cao hơn hẳn để luôn nổi lên trên */
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+
+      .nav-list {
+        display: flex;
+        gap: 40px;
+        list-style: none; /* 5. Xóa bỏ hoàn toàn các dấu chấm tròn lỗi hiển thị */
+      }
+
+      .nav-item {
+        text-decoration: none;
+        color: #000;
+        font-size: 14px;
+        font-weight: 500; /* Thêm độ đậm cho chữ rõ hơn trên nền sáng */
+      }
+
+      .nav-item:hover {
+        border-bottom: 2px solid #000;
+      }
+
+      /* Style cho Dropdown */
+      .dropdown-item {
+        position: relative; /* Để menu con căn vị trí theo menu cha */
+        display: inline-block;
+      }
+
+      .dropdown-toggle {
+        cursor: pointer;
+      }
+
+      .arrow {
+        font-size: 10px;
+        margin-left: 5px;
+        transition: transform 0.2s;
+        display: inline-block;
+      }
+
+      /* Ẩn menu con mặc định */
+      .dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%; /* Xuất hiện ngay phía dưới chữ Product */
+        left: 0;
+        background-color: #ffffff;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        padding: 8px 0;
+        margin-top: 10px;
+        z-index: 1000;
+      }
+
+      /* Style cho các liên kết bên trong menu con */
+      .dropdown-menu a {
+        color: #333 !important; /* Chữ màu tối để nổi trên nền trắng */
+        padding: 10px 16px;
+        text-decoration: none;
+        display: block;
+        font-size: 14px;
+        transition: background 0.2s;
+      }
+
+      .dropdown-menu a:hover {
+        background-color: #f1f5f9;
+        border-radius: 4px;
+      }
+
+      /* Class này sẽ được JS thêm vào để hiển thị menu */
+      .dropdown-item.show .dropdown-menu {
+        display: block;
+      }
+
+      /* Xoay mũi tên ngược lên khi mở menu */
+      .dropdown-item.show .arrow {
+        transform: rotate(180deg);
+      }
+
+      .action a {
+        text-decoration: none;
+        font-size: 14px;
+        padding: 6px 12px; /* Chỉnh lại padding cho nút đều nhau */
+        background-color: orange;
+        border-radius: 8px;
+        color: #fff;
+      }
+
       .container {
         text-align: center;
         background: #ffffff;
@@ -32,73 +139,103 @@
         border-radius: 20px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
         width: 100%;
-        max-width: 550px; /* Giới hạn độ rộng tối đa trên máy tính */
+        max-width: 550px;
         transition: all 0.3s ease;
+        margin: auto 0; /* 6. Giữ cho khối nội dung tự động căn giữa hoàn hảo theo chiều dọc */
+      }
+
+      /* Vùng chọn bài học */
+      .select-box {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .select-box label {
+        font-weight: 600;
+        color: #4a5568;
+        display: block;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+      }
+
+      .select-box select {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 2px solid #cbd5e1;
+        font-size: 1rem;
+        outline: none;
+        color: #334155;
+        cursor: pointer;
+        background-color: #fff;
       }
 
       /* Ô hiển thị chữ */
       .text-box {
-        min-height: 100px;
+        min-height: 110px;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         border: 2px dashed #41719c;
         border-radius: 12px;
         padding: 20px;
-        margin-bottom: 30px;
+        margin-bottom: 25px;
         font-size: 1.25rem;
         color: #2c3e50;
         font-weight: 500;
         line-height: 1.5;
-        background-color: #f8fbc2; /* Màu nền nhẹ giúp làm nổi bật chữ */
-        word-break: break-word; /* Tránh tràn chữ trên điện thoại màn hình nhỏ */
+        background-color: #f8fbc2;
+        word-break: break-word;
       }
 
-      /* Nút bấm mặc định */
+      /* Khu vực chứa các nút bấm */
+      .button-group {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
       .btn {
-        background-color: #41719c;
         color: #ffffff;
         border: none;
-        padding: 14px 35px;
-        font-size: 1.1rem;
+        padding: 14px 20px;
+        font-size: 1rem;
         font-weight: 600;
         border-radius: 10px;
         cursor: pointer;
-        width: 100%; /* Chuyển thành nút dài toàn màn hình trên điện thoại */
-        max-width: 280px; /* Giới hạn độ rộng nút trên máy tính */
-        box-shadow: 0 4px 12px rgba(65, 113, 156, 0.3);
+        flex: 1;
+        min-width: 200px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         transition:
           background-color 0.1s ease,
           transform 0.1s ease;
-        -webkit-tap-highlight-color: transparent; /* Xóa viền đen xấu xí khi bấm trên điện thoại */
+        -webkit-tap-highlight-color: transparent;
       }
 
-      /* Hiệu ứng đổi màu đỏ tức thì khi click chuột hoặc chạm tay */
-      .btn.clicked {
-        background-color: #58d554 !important;
-        box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4);
-        transform: scale(0.98); /* Hiệu ứng lún nút nhẹ khi bấm */
+      /* Nút Đổi câu (Mặc định Xanh dương -> Click Đỏ) */
+      #randomBtn {
+        background-color: #41719c;
+      }
+      #randomBtn.clicked {
+        background-color: #ff0000 !important;
+        transform: scale(0.98);
       }
 
-      /* ==========================================================================
-           RESPONSIVE DESIGN (Tối ưu hóa hiển thị cho mọi thiết bị)
-           ========================================================================== */
-
-      /* 1. Dành cho máy tính bảng và màn hình nhỏ hơn (Dưới 768px) */
-      @media (max-width: 768px) {
-        .container {
-          padding: 30px 20px;
-        }
-        .text-box {
-          font-size: 1.15rem;
-          min-height: 90px;
-        }
+      /* Nút Dịch (Mặc định Xanh lá -> Click Cam) */
+      #translateBtn {
+        background-color: #2e7d32;
+      }
+      #translateBtn.clicked {
+        background-color: #ef6c00 !important;
+        transform: scale(0.98);
       }
 
-      /* 2. Dành cho điện thoại di động (Dưới 480px) */
+      /* Responsive */
       @media (max-width: 480px) {
         body {
-          padding: 15px; /* Giảm khoảng cách rìa ngoài màn hình */
+          padding: 15px;
         }
         .container {
           padding: 25px 15px;
@@ -106,69 +243,250 @@
         }
         .text-box {
           font-size: 1.1rem;
-          padding: 15px;
-          margin-bottom: 20px;
-          min-height: 80px;
+          min-height: 90px;
+        }
+        .button-group {
+          flex-direction: column;
+          gap: 10px;
         }
         .btn {
-          font-size: 1rem;
-          padding: 12px 20px;
-          max-width: 100%; /* Nút bấm chiếm trọn chiều rộng để dễ chạm ngón tay */
+          width: 100%;
         }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="text-box" id="resultBox">
-        Nhấn nút bên dưới để chọn câu ngẫu nhiên
+    <header class="header">
+      <a href="./index.html">
+        <img
+          class="logo"
+          src="https://img.freepik.com/vector-gratis/estilo-dibujado-mano-ventas-regreso-escuela_23-2148592450.jpg?size=338&ext=jpg&ga=GA1.1.672697106.1717977600&semt=ais_user"
+          alt=""
+        />
+      </a>
+      <div class="nav-list">
+        <a href="" class="nav-item">Home</a>
+        <a href="" class="nav-item">About</a>
+        <!-- Mục Product có Dropdown -->
+        <div class="dropdown-item">
+          <a href="#" class="nav-item dropdown-toggle"
+            >Web hữu ích <span class="arrow">▼</span></a
+          >
+          <div class="dropdown-menu">
+            <a target="_blank" href="https://der-artikel.de/">Tra giống từ</a>
+            <a href="#">Đang phát triển...</a>
+            <a href="#">Đang phát triển...</a>
+          </div>
+        </div>
+        <a href="" class="nav-item">Contact</a>
       </div>
-      <button class="btn" id="randomBtn" onclick="layCauNgauNhien()">
-        Phuong Anh Chicken
-      </button>
+    </header>
+
+    <div class="container">
+      <!-- Menu chọn mục/bài học -->
+      <div class="select-box">
+        <label for="lessonSelect">Chọn bài học hôm nay:</label>
+        <select id="lessonSelect" onchange="doiBaiHoc()">
+          <!-- Các mục bài học sẽ tự động được nạp vào đây từ dữ liệu bên dưới -->
+        </select>
+      </div>
+
+      <div class="text-box" id="resultBox">Chọn bài học và nhấn đổi câu</div>
+
+      <div class="button-group">
+        <button class="btn" id="randomBtn" onclick="layCauNgauNhien()">
+          Đổi Câu Ngẫu Nhiên
+        </button>
+        <button class="btn" id="translateBtn" onclick="dichSangTiengDuc()">
+          Dịch Sang Tiếng Đức
+        </button>
+      </div>
     </div>
 
     <script>
-      // Danh sách 20 câu tiếng Việt của bạn
-      const danhSachCau = [
-        "Tôi chơi bóng đá vào cuối tuần.",
-        "Tôi đi học mỗi ngày.",
-        "Tôi có một con chó.",
-        "Bố mẹ tôi làm việc ở Hà Nội.",
-        "Anh ấy có một người chị/em gái.",
-        "Bố tôi uống cà phê.",
-        "Cô ấy ăn một chiếc pizza.",
-        "Hôm nay tôi ngủ đến 9 giờ.",
-        "Ông tôi 90 tuổi.",
-        "Tôi tặng cô ấy một món quà.",
-        "Tôi bắt xe buýt đi làm.",
-        "Mẹ tôi đi siêu thị vào thứ Bảy.",
-        "Cô ấy thích chơi đàn piano vào buổi tối.",
-        "Chúng tôi đang tìm một căn hộ.",
-        "Ngài/Bạn có thích đi du lịch nước ngoài không?",
-        "Tôi luôn đón sinh nhật bên cạnh bố mẹ tôi.",
-        "Tôi có rất nhiều sở thích khác nhau.",
-        "Ngôi nhà của tôi không lớn lắm nhưng ấm cúng.",
-        "Thói quen buổi sáng của tôi bắt đầu lúc 6:30.",
-        "Họ thường ăn sáng ở nhà.",
-      ];
+      document.addEventListener("DOMContentLoaded", function () {
+        const dropdown = document.querySelector(".dropdown-item");
+        const toggleBtn = document.querySelector(".dropdown-toggle");
 
+        // 1. Click vào Product để Bật/Tắt menu
+        toggleBtn.addEventListener("click", function (e) {
+          e.preventDefault(); // Ngăn trang web bị load lại (do thẻ <a href="#">)
+          dropdown.classList.toggle("show");
+        });
+
+        // 2. Click ra ngoài màn hình thì tự động đóng menu lại
+        window.addEventListener("click", function (e) {
+          if (!dropdown.contains(e.target)) {
+            dropdown.classList.remove("show");
+          }
+        });
+      });
+      // ==========================================================================
+      // KHO DỮ LIỆU BÀI HỌC (Bạn muốn thêm câu hay thêm bài mới chỉ cần sửa ở đây)
+      // Cấu trúc mảng 2 chiều: [ "Câu Tiếng Việt", "Câu Tiếng Đức tương ứng" ]
+      // ==========================================================================
+      const duLieuBaiHoc = {
+        "Mục 1: Mẫu câu (Buổi học 1)": [
+          [
+            "Tôi chơi bóng đá vào cuối tuần.",
+            "Ich spiele Fußball am Wochenende.",
+          ],
+          ["Tôi đi học mỗi ngày.", "Ich gehe jeden Tag zur Schule."],
+          ["Tôi có một con chó.", "Ich habe einen Hund."],
+          ["Bố mẹ tôi làm việc ở Hà Nội.", "Meine Eltern arbeiten in Ha Noi."],
+          ["Anh ấy có một người chị/em gái.", "Er hat eine Schwester."],
+          ["Bố tôi uống cà phê.", "Mein Vater trinkt Kaffee."],
+          ["Cô ấy ăn một chiếc pizza.", "Sie isst eine Pizza."],
+          ["Hôm nay tôi ngủ đến 9 giờ.", "Heute schlafe ich bis 9 Uhr."],
+          ["Ông tôi 90 tuổi.", "Mein Großvater ist 90 Jahre alt."],
+          ["Tôi tặng cô ấy một món quà.", "Ich schenke ihr ein Geschenk."],
+          ["Tôi đi xe buýt đi làm.", "Ich nehme den Bus zur Arbeit."],
+          [
+            "Mẹ tôi đi siêu thị vào thứ Bảy.",
+            "Meine Mutter geht am Samstag zum Supermarkt.",
+          ],
+          [
+            "Cô ấy thích chơi đàn piano vào buổi tối.",
+            "Sie spielt gern Klavier am Abend.",
+          ],
+          ["Chúng tôi đang tìm một căn hộ.", "Wir suchen eine Wohnung."],
+          [
+            "Ngài/Bạn có thích đi du lịch nước ngoài không?",
+            "Reisen Sie gern ins Ausland?",
+          ],
+          [
+            "Tôi luôn đón sinh nhật tại nhà bố mẹ tôi.",
+            "Ich feiere meinen Geburtstag immer bei meinen Eltern.",
+          ],
+          [
+            "Tôi có rất nhiều sở thích khác nhau.",
+            "Ich habe sehr viele verschiedene Hobbys.",
+          ],
+          [
+            "Ngôi nhà của tôi không lớn lắm nhưng ấm cúng.",
+            "Mein Haus ist nicht sehr groß aber gemütlich.",
+          ],
+          [
+            "Thói quen buổi sáng của tôi bắt đầu lúc 6:30.",
+            "Meine Morgenroutine beginnt um 6:30 Uhr.",
+          ],
+          ["Họ thường ăn sáng ở nhà.", "Sie frühstücken oft zu Hause."],
+        ],
+
+        // Cách thêm bài mới: Thêm dấu phẩy "," ở trên rồi copy cấu trúc dưới đây xuống điền chữ vào
+        "Mục 2: Mẫu câu (Buổi học 2)": [
+          [
+            "Mẹ tôi tên là Anna, bà ấy 40 tuổi, bà ấy là bác sĩ",
+            "Meine Mutter heißt Anna, sie ist 40 Jahre alt und sie ist Ärztin",
+          ],
+          [
+            "Chúng tôi thường đến thăm bố mẹ của chúng tôi vào cuối tuần",
+            "Wir besuchen unsere Eltern oft am Wochenende",
+          ],
+          [
+            "Tôi rất thích tham quan phố cổ ở Hà Nội",
+            "Ich besichtige sehr gern die Altstadt in Ha Noi.",
+          ],
+          [
+            "Bố tôi đi làm vào buổi sáng lúc 8 giờ",
+            "Mein Vater geht morgens um 8 Uhr zur Arbeit.",
+          ],
+          [
+            "Hôm nay tôi làm việc nhà, tôi lau nhà, rửa bát và dọn phòng",
+            "Heute mache ich Hausarbeit, ich wische den Boden, spüle das Geschirr und räume das Zimmer auf",
+          ],
+          [
+            "Họ thường đi dạo ở công viên sau bữa tối",
+            "Sie gehen oft nach dem Abendessen im Park spazieren",
+          ],
+          [
+            "Tôi và Andy là bạn bè, chúng tôi thích chơi đá bóng cùng nhau sau giờ học",
+            "Andy und ich sind Freunde. Wir spielen nach der Schule gern zusammen Fußball",
+          ],
+          [
+            "Ông bà tôi đã già, họ không còn đi làm nữa",
+            "Meine Großeltern sind alt, sie arbeiten nicht mehr",
+          ],
+          [
+            "Bạn có thích uống trà vào buổi sáng ko?",
+            "Trinkst du morgens gern Tee?",
+          ],
+          [
+            "Tôi thích uống cà phê với nhiều sữa và đá",
+            "Ich trinke gern Kaffee mit viel Milch und Eis.",
+          ],
+          // Thêm bao nhiêu câu tùy thích vào đây...
+        ],
+      };
+
+      // Các biến toàn cục để quản lý trạng thái hiện tại
+      let baiHocHienTai = "";
+      let indexCauHienTai = -1;
+
+      // Tự động nạp danh sách các mục/bài học vào thẻ Select khi vừa mở trang web
+      function khoiTaoGiaoDien() {
+        const select = document.getElementById("lessonSelect");
+        select.innerHTML = "";
+
+        for (let tenBai in duLieuBaiHoc) {
+          let option = document.createElement("option");
+          option.value = tenBai;
+          option.innerText = tenBai;
+          select.appendChild(option);
+        }
+        baiHocHienTai = Object.keys(duLieuBaiHoc)[0];
+      }
+
+      // Hàm chạy khi người dùng chuyển đổi bài học trên dropdown
+      function doiBaiHoc() {
+        baiHocHienTai = document.getElementById("lessonSelect").value;
+        document.getElementById("resultBox").innerText =
+          "Đã chuyển bài. Hãy nhấn nút để chọn câu ngẫu nhiên!";
+        indexCauHienTai = -1;
+      }
+
+      // Tính năng chọn câu tiếng Việt ngẫu nhiên
       function layCauNgauNhien() {
         const btn = document.getElementById("randomBtn");
         const resultBox = document.getElementById("resultBox");
+        const danhSachCau = duLieuBaiHoc[baiHocHienTai];
 
-        // 1. Kích hoạt hiệu ứng đổi sang màu đỏ lập tức
         btn.classList.add("clicked");
 
-        // 2. Chọn câu ngẫu nhiên và hiển thị
-        const indexNgauNhien = Math.floor(Math.random() * danhSachCau.length);
-        resultBox.innerText = danhSachCau[indexNgauNhien];
+        // Chọn ngẫu nhiên index câu dựa vào bài học đang chọn
+        indexCauHienTai = Math.floor(Math.random() * danhSachCau.length);
 
-        // 3. Trả lại màu xanh mặc định sau 0.2 giây (200ms)
+        // Lấy câu Tiếng Việt (phần tử số 0 trong mảng con)
+        resultBox.innerText = danhSachCau[indexCauHienTai][0];
+
         setTimeout(() => {
           btn.classList.remove("clicked");
         }, 200);
       }
+
+      // Tính năng dịch câu hiện tại sang Tiếng Đức tương ứng
+      function dichSangTiengDuc() {
+        const btn = document.getElementById("translateBtn");
+        const resultBox = document.getElementById("resultBox");
+        const danhSachCau = duLieuBaiHoc[baiHocHienTai];
+
+        btn.classList.add("clicked");
+
+        if (indexCauHienTai === -1) {
+          resultBox.innerText =
+            "Vui lòng bấm nút 'Đổi Câu Ngẫu Nhiên' trước đã!";
+        } else {
+          // Lấy câu Tiếng Đức tương ứng (phần tử số 1 trong mảng con)
+          resultBox.innerText = danhSachCau[indexCauHienTai][1];
+        }
+
+        setTimeout(() => {
+          btn.classList.remove("clicked");
+        }, 200);
+      }
+
+      // Chạy khởi tạo danh sách bài khi trang web vừa tải xong
+      window.onload = khoiTaoGiaoDien;
     </script>
   </body>
 </html>
